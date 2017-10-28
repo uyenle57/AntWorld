@@ -57,3 +57,89 @@ public void initWorld() {
   //cells[numRows / 2 + 1][numCols / 2 - 2].state = Cell.OBSTACLE;
   //cells[numRows / 2 + 2][numCols / 2 - 2].state = Cell.OBSTACLE;
 }
+
+
+
+// Draw Ants, Cells and Grid
+
+void drawAnts() {
+  rectMode(CORNER);
+  noStroke();
+
+  for (int i = 0; i < ants.size(); i++) {
+
+    Ant ant = ants.get(i);
+
+    for (Location l : ant.explored) {
+      fill(VISITED);
+      rect(l.col * cellWidth, l.row * cellHeight, cellWidth, 
+        cellHeight);
+    }
+
+    if (inWorld(ant)) {
+      fill(ANT);
+      rect(ant.pos.col * cellWidth, ant.pos.row * cellHeight, 
+        cellWidth, cellHeight);
+    }
+  }
+}
+
+void drawCells() {
+  noStroke();
+  rectMode(CORNER);
+
+  for (int col = 0; col < numCols; col++) {
+    for (int row = 0; row < numRows; row++) {
+
+      if (cells[row][col].state != Cell.BACKGROUND) {
+
+        fill(stateToColour.get(cells[row][col].state));
+        rect(col * cellWidth, row * cellHeight, cellWidth, cellHeight);
+      }
+    }
+  }
+}
+
+void drawGrid() {
+  stroke(128);
+
+  for (int col = 1; col <= numCols; col++) {
+    line(col * cellWidth, 0, col * cellWidth, height);
+  }
+
+  for (int row = 1; row <= numRows; row++) {
+    line(0, row * cellHeight, width, row * cellHeight);
+  }
+}
+
+
+
+// User Interactions
+
+public void keyPressed() {
+  
+  if (key == ' ')
+    pause = !pause;
+  else if (key == 't')
+    toggle = !toggle;
+}
+
+public void mouseClicked() {
+  
+  int row = (int) (mouseY / cellWidth);
+  int col = (int) (mouseX / cellHeight);
+  Location loc = new Location(row, col);
+  if (!loc.equals(food) && !loc.equals(nest))
+    setCellState(row, col, toggle ? Cell.BACKGROUND : Cell.OBSTACLE);
+
+  println(switchEnv(loc));
+}
+
+public void mouseDragged() {
+  
+  int row = (int) (mouseY / cellWidth);
+  int col = (int) (mouseX / cellHeight);
+  Location loc = new Location(row, col);
+  if (!loc.equals(food) && !loc.equals(nest))
+    setCellState(row, col, toggle ? Cell.OBSTACLE : Cell.BACKGROUND);
+}
