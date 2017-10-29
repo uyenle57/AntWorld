@@ -16,13 +16,13 @@ public class Ant {
   final static String DEPTH_FIRST = "depth first";
   final static String UNIFORM_COST = "uniform cost";
   
-  //ArrayList<Location> frontier; // Cells to visit
-  //ArrayList<Location> explored; // Cells already expanded
+  ArrayList<Location> frontier; // Cells to visit
+  ArrayList<Location> explored; // Cells already expanded
   
   //Initialise search strategy classes
-  BreathFirstSearch breadthFirst;
-  UniformCostSearch uniformCost;
-  DepthFirstSearch depthFirst;
+  BreadthFirstSearch breadthFirst;
+  //UniformCostSearch uniformCost;
+  //DepthFirstSearch depthFirst;
  
   //Constructor
   Ant(int r, int c, AntWorld antWorld) {
@@ -34,13 +34,13 @@ public class Ant {
     if (antWorld.food.equals(pos))
       stop(antWorld);
   
-    //explored = new ArrayList<Location>();
-    //frontier = new ArrayList<Location>();
-    //frontier.add(new Location(pos));
+    explored = new ArrayList<Location>();
+    frontier = new ArrayList<Location>();
+    frontier.add(new Location(pos));
     
-    breadthFirst = new BreathFirstSearch(pos, antWorld.food);
-    uniformCost = new UniformCostSearch(pos, antWorld.food);
-    depthFirst = new DepthFirstSearch(pos, antWorld.food);
+    breadthFirst = new BreadthFirstSearch(pos, antWorld.food);
+    //uniformCost = new UniformCostSearch(pos, antWorld.food);
+    //depthFirst = new DepthFirstSearch(pos, antWorld.food);
     
     diagonal = false; //ant moves diagonally?
   }
@@ -79,11 +79,10 @@ public class Ant {
     }
   
     //determines strategy
-    Location loc = null; //Why create a new Location???
+    Location loc = null;
     
     if (strategy.equals(BREADTH_FIRST)) {
       loc = frontier.remove(0);
-      //breadthFirst.removeElement();
     }
     else if (strategy.equals(DEPTH_FIRST)) {
       loc = frontier.remove(frontier.size() - 1);
@@ -166,8 +165,6 @@ public class Ant {
   
   
   //Uniform Cost Search - prioritizes lowest path cost in frontier
-  // Cost f(n) = g(n)
-  
   //Depth Limited Search (DLS) - add a limit (l) to DFS so the search is complete
   //Iterative Deepending Search - repeats DLS by gradually increasing limit (l) until solution is found
 

@@ -1,20 +1,4 @@
 
-/*
-TO DO:
-  [x] Clean up code
-  [ ] Add GUI
-
-  Implement:
-  [ ] Uniform Cost Search
-  [ ] Depth-Limited Search
-  [ ] Iterative deepending (optional)
-  
-  Compare:
-  [ ] UCS vs. BFS
-  [ ] DFS vs. DLS
-*/
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
