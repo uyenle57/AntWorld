@@ -78,17 +78,16 @@ void updateAnts() {
     case DFS_TREE:
       ant.simpleTreeSearch(this, Ant.DEPTH_FIRST);
       break;
-    //case UCS_TREE:
-    //  ant.simpleTreeSearch(this, Ant.UNIFORM_COST);
+    case DEPTH_LIMITED:
+      ant.simpleTreeSearch(this, Ant.DEPTH_LIMITED);
+      break;
     case BFS_GRAPH:
       ant.simpleGraphSearch(this, Ant.BREADTH_FIRST);
       break;
     case DFS_GRAPH:
       ant.simpleGraphSearch(this, Ant.DEPTH_FIRST);
       break;
-    //case UCS_GRAPH:
-    //  ant.simpleGraphSearch(this, Ant.UNIFORM_COST);
-
+      
     //Informed
     case RANDOM:
       ant.randomSearch(this);

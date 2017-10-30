@@ -1,11 +1,16 @@
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.*;
 
 public class Ant {
 
-  Location pos; //initialState
+  Location pos;
   int state;
-  boolean diagonal; // permit diagonal movement
+  boolean diagonal; //permit diagonal movement
+
+  //Depth limited search first limits
+  int depthLimit = 10;
+  int currentDepth = 0; //Variable to keep track of current depth
 
   final static double TWOPI = 2 * Math.PI;
 
@@ -15,14 +20,10 @@ public class Ant {
   final static String BREADTH_FIRST = "breadth first";
   final static String DEPTH_FIRST = "depth first";
   final static String UNIFORM_COST = "uniform cost";
+  final static String DEPTH_LIMITED = "depth limited";
   
   ArrayList<Location> frontier; // Cells to visit
   ArrayList<Location> explored; // Cells already expanded
-  
-  //Initialise search strategy classes
-  BreadthFirstSearch breadthFirst;
-  //UniformCostSearch uniformCost;
-  //DepthFirstSearch depthFirst;
  
   //Constructor
   Ant(int r, int c, AntWorld antWorld) {
@@ -31,16 +32,13 @@ public class Ant {
     state = 0;
 
     // in case the search program does not check the initial position
-    if (antWorld.food.equals(pos))
+    if (antWorld.food.equals(pos)) {
       stop(antWorld);
+    }
   
     explored = new ArrayList<Location>();
     frontier = new ArrayList<Location>();
     frontier.add(new Location(pos));
-    
-    breadthFirst = new BreadthFirstSearch(pos, antWorld.food);
-    //uniformCost = new UniformCostSearch(pos, antWorld.food);
-    //depthFirst = new DepthFirstSearch(pos, antWorld.food);
     
     diagonal = false; //ant moves diagonally?
   }
@@ -67,31 +65,31 @@ public class Ant {
   }
   
   
-  
   /*============= TREE SEARCH and GRAPH SEARCH ===========*/
-  
+
   public void simpleTreeSearch(AntWorld antWorld, String strategy) {
     
-    //if the frontier is empty then return failure
+    
+    //Make sure that frontier is not empty, otherwise fail the program
     if (frontier.isEmpty()) {
       System.out.println("failure");
       return;
     }
   
-    //determines strategy
     Location loc = null;
     
+    //Determines strategy
     if (strategy.equals(BREADTH_FIRST)) {
       loc = frontier.remove(0);
     }
-    else if (strategy.equals(DEPTH_FIRST)) {
+    else if (strategy.equals(DEPTH_FIRST) || strategy.equals(DEPTH_LIMITED)) {
       loc = frontier.remove(frontier.size() - 1);
     }
     else {
       System.out.println("strategy is not applicable");
       return;
     }
-  
+    
     move(loc);
     
     //if the ant reaches food then return the corresponding solution
@@ -107,9 +105,24 @@ public class Ant {
     //expand the chosen node, adding the resulting nodes to the frontier
     ArrayList<Location> expanded = availableCells(antWorld, pos);
     for (int i = 0; i < expanded.size(); i++) {
-      frontier.add(expanded.get(i));
+      Location l = expanded.get(i);
+      
+      if (strategy.equals(DEPTH_LIMITED)) {
+        if (!inList(frontier, l) && !inList(explored, l) && currentDepth < depthLimit ) {
+          frontier.add(expanded.get(i));
+        }
+      }
+      else {
+        frontier.add(expanded.get(i));
+      }
     }
+    
+    //Gradually increase the currentDepth until depthLimit is reached
+     if (strategy.equals(DEPTH_LIMITED)) {
+        currentDepth++; 
+     }
   }
+
 
   public void simpleGraphSearch(AntWorld antWorld, String strategy) {
   
@@ -127,6 +140,29 @@ public class Ant {
     else if (strategy.equals(DEPTH_FIRST)) {
       loc = frontier.remove(frontier.size() - 1);
     }
+    /*
+    else if (strategy.equals(UNIFORM_COST)) {
+      
+      Collections.sort(frontier, new Comparator<Location>() {
+        @Override
+        //Compare between left and right hand side locations
+        public int compare(Location lhs, Location rhs) {
+          // -1 - less than, 1 - greater than, 0 - equal, all inversed for descending          
+          if (lhs.getCost() < rhs.getCost()) {
+            return -1;  
+          } else if (lhs.getCost() > rhs.getCost()) {
+            return 1;
+          } else {
+           return 0; 
+          }
+        }
+      });
+      
+      loc = frontier.remove(0);
+      
+      //System.out.println(frontier);      
+    }
+    */
     else {
       System.out.println("strategy is not applicable");
       return;
@@ -150,25 +186,16 @@ public class Ant {
       Location l = expanded.get(i);
       
       //only if not in the frontier or explored set
-      if (!inList(frontier, l) && !inList(explored, l))
-        frontier.add(l);
+      if (!inList(frontier, l) && !inList(explored, l)){
+        
+        if(strategy.equals(UNIFORM_COST)){
+          frontier.add(new Location(l, antWorld.distance(pos, antWorld.food)));
+        }else{
+          frontier.add(l);
+        }
+      }
     }
   }
-  
-  
-  
-  /*============= UNINFORMED SEARCH STRATEGIES =============*/
-  
-  //Breadth First Search
-  
-  //Depth First Search
-  
-  
-  //Uniform Cost Search - prioritizes lowest path cost in frontier
-  //Depth Limited Search (DLS) - add a limit (l) to DFS so the search is complete
-  //Iterative Deepending Search - repeats DLS by gradually increasing limit (l) until solution is found
-
-  
   
   
   /*=============== INFORMED SEARCH STRATEGIES ============*/
@@ -315,8 +342,8 @@ public class Ant {
 
     ArrayList<Location> list = new ArrayList<Location>();
     int incr = diagonal ? 1 : 2;
+    
     for (int dir = 0; dir < 8; dir += incr) {
-
       Location l = add(loc, dir);
       if (antWorld.inWorld(l) && antWorld.getCellState(l) != Cell.OBSTACLE) {
         list.add(l);

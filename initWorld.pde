@@ -25,7 +25,7 @@ public void initWorld() {
   
   //Set environment and strategies here!!!!
   env = Env.UNINFORMED;
-  strategy = Strategy.DFS_TREE;
+  strategy = Strategy.DEPTH_LIMITED;
   
   if (env == Env.DECEPTION) {
     falseFood = new Location(2, numCols - 3);
