@@ -1,5 +1,4 @@
 
-import controlP5.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,10 +13,6 @@ final static int VISITED = 64 << 24 | 32 << 16;
 Map<Integer, Integer> stateToColour = new HashMap<Integer, Integer>();
 boolean pause;
 boolean toggle;
-int windowWidth = 512;
-
-ControlP5 cp5;
-DropdownList d1, d2, d3, d4;
 
 //Initialise objects 
 Env env;
@@ -37,7 +32,8 @@ ArrayList<Ant> ants;
 
 public void setup() {
 
-  size(812, 512);
+  size(512, 512);
+  colorMode(HSB, 100);
   pause = true;
   toggle = true; //toggle obstacle/background when dragging mouse
   frameRate(12);
@@ -46,24 +42,23 @@ public void setup() {
 
   //Colours for cell state
   stateToColour.put(Cell.UNDEFINED, -1);
-  stateToColour.put(Cell.BACKGROUND, 255 << 24 | 255 << 16 | 255 << 8
-    | 255);
+  stateToColour.put(Cell.BACKGROUND, 255 << 24 | 255 << 16 | 255 << 8 | 255);
   stateToColour.put(Cell.FOOD, 255 << 24 | 128);
   stateToColour.put(Cell.NEST, 255 << 24 | 128 << 8);
   stateToColour.put(Cell.OBSTACLE, 255 << 24);
   stateToColour.put(Cell.FALSEFOOD, 64 << 24 | 128);
+  
 }
 
 
 public void draw() {
-
+  
   background(stateToColour.get(Cell.BACKGROUND));
 
   drawCells();
   drawAnts();
   drawGrid();
-  drawGui();
-  
+
   if (!pause)
     updateAnts();
 }
