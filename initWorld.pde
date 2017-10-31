@@ -1,7 +1,4 @@
 
-// ADD GUI HERE
-
-
 //Initialise the world
 
 public void initWorld() {
@@ -23,10 +20,10 @@ public void initWorld() {
 
   random = new Random(); //Pseudorandom number generator (PRNG)
   
-  //Set environment and strategies here!!!!
   env = Env.UNINFORMED;
-  strategy = Strategy.DEPTH_LIMITED;
+  strategy = Strategy.UCS_TREE;
   
+  // Add False food in the Deception environment
   if (env == Env.DECEPTION) {
     falseFood = new Location(2, numCols - 3);
     cells[falseFood.row][falseFood.col].state = Cell.FALSEFOOD;
@@ -72,14 +69,12 @@ void drawAnts() {
 
     for (Location l : ant.explored) {
       fill(VISITED);
-      rect(l.col * cellWidth, l.row * cellHeight, cellWidth, 
-        cellHeight);
+      rect(l.col * cellWidth, l.row * cellHeight, cellWidth, cellHeight);
     }
 
     if (inWorld(ant)) {
       fill(ANT);
-      rect(ant.pos.col * cellWidth, ant.pos.row * cellHeight, 
-        cellWidth, cellHeight);
+      rect(ant.pos.col * cellWidth, ant.pos.row * cellHeight, cellWidth, cellHeight);
     }
   }
 }
@@ -132,7 +127,7 @@ public void mouseClicked() {
   if (!loc.equals(food) && !loc.equals(nest))
     setCellState(row, col, toggle ? Cell.BACKGROUND : Cell.OBSTACLE);
 
-  println(switchEnv(loc));
+  println(updateEnv(loc));
 }
 
 public void mouseDragged() {

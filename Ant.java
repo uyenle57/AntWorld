@@ -1,31 +1,33 @@
+
+import java.util.*;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.*;
+
 
 public class Ant {
 
   Location pos;
   int state;
   boolean diagonal; //permit diagonal movement
-
-  //Depth limited search first limits
-  int depthLimit = 10;
-  int currentDepth = 0; //Variable to keep track of current depth
-
+  
   final static double TWOPI = 2 * Math.PI;
 
   // Directions
   final static int EAST = 0, NORTHEAST = 1, NORTH = 2, NORTHWEST = 3, WEST = 4, SOUTHWEST = 5, SOUTH = 6, SOUTHEAST = 7;
 
-  final static String BREADTH_FIRST = "breadth first";
-  final static String DEPTH_FIRST = "depth first";
-  final static String UNIFORM_COST = "uniform cost";
-  final static String DEPTH_LIMITED = "depth limited";
+  final static String BREADTH_FIRST = "Breadth First Search";
+  final static String DEPTH_FIRST = "Depth First Search";
+  final static String DEPTH_LIMITED = "Depth Limited Search";
+  final static String UNIFORM_COST = "Uniform Cost Search";
+  
+  //Depth Limited Search first limits
+  int depthLimit = 10;
+  int currentDepth = 0; //Keeps track of current depth
   
   ArrayList<Location> frontier; // Cells to visit
   ArrayList<Location> explored; // Cells already expanded
  
-  //Constructor
+
   Ant(int r, int c, AntWorld antWorld) {
 
     pos = new Location(r, c);
@@ -49,7 +51,7 @@ public class Ant {
 
   // Return to nest
   void stop(AntWorld antWorld) {
-    System.out.println("found food in " + explored.size() + " steps");
+    System.out.println(UNIFORM_COST + ": "+ "Found food in " + explored.size() + " steps");
     antWorld.pause = true;
 
     // returnToNest(antWorld);
@@ -68,11 +70,10 @@ public class Ant {
   /*============= TREE SEARCH and GRAPH SEARCH ===========*/
 
   public void simpleTreeSearch(AntWorld antWorld, String strategy) {
-    
-    
+   
     //Make sure that frontier is not empty, otherwise fail the program
     if (frontier.isEmpty()) {
-      System.out.println("failure");
+      System.out.println("Failure");
       return;
     }
   
@@ -80,13 +81,35 @@ public class Ant {
     
     //Determines strategy
     if (strategy.equals(BREADTH_FIRST)) {
-      loc = frontier.remove(0);
+      loc = frontier.remove(0); //Remove the first element in the queue (FIFO)
     }
     else if (strategy.equals(DEPTH_FIRST) || strategy.equals(DEPTH_LIMITED)) {
-      loc = frontier.remove(frontier.size() - 1);
+      loc = frontier.remove(frontier.size() - 1); //Remove the last element in the stack (LIFO)
+    }
+    else if (strategy.equals(UNIFORM_COST)) {
+      
+      Collections.sort(frontier, new Comparator<Location>() {
+        
+        @Override
+        //Compare the distance between left and right hand side locations
+        public int compare(Location lhs, Location rhs) {
+          // -1 - less than, 1 - greater than, 0 - equal, all inversed for descending          
+          if (lhs.getCost() < rhs.getCost()) {
+            return -1;
+          }
+          else if (lhs.getCost() > rhs.getCost()) {
+            return 1;
+          }
+          else {
+           return 0; 
+          }
+        }
+      });
+      
+      loc = frontier.remove(0);
     }
     else {
-      System.out.println("strategy is not applicable");
+      System.out.println("Strategy is not applicable");
       return;
     }
     
@@ -102,12 +125,16 @@ public class Ant {
     if (!inList(explored, pos))
       explored.add(new Location(pos));
     
-    //expand the chosen node, adding the resulting nodes to the frontier
     ArrayList<Location> expanded = availableCells(antWorld, pos);
+    
+    //expand the chosen node, adding the resulting nodes to the frontier
     for (int i = 0; i < expanded.size(); i++) {
       Location l = expanded.get(i);
       
-      if (strategy.equals(DEPTH_LIMITED)) {
+      if(strategy.equals(UNIFORM_COST)) {
+          frontier.add(new Location(l, antWorld.distance(pos, antWorld.food)));
+      }
+      else if (strategy.equals(DEPTH_LIMITED)) {
         if (!inList(frontier, l) && !inList(explored, l) && currentDepth < depthLimit ) {
           frontier.add(expanded.get(i));
         }
@@ -128,7 +155,7 @@ public class Ant {
   
     //If frontier is empty then return failture
     if (frontier.isEmpty()) {
-      System.out.println("failure");
+      System.out.println("Failure");
       return;
     }
     
@@ -140,14 +167,12 @@ public class Ant {
     else if (strategy.equals(DEPTH_FIRST)) {
       loc = frontier.remove(frontier.size() - 1);
     }
-    /*
+    
     else if (strategy.equals(UNIFORM_COST)) {
       
       Collections.sort(frontier, new Comparator<Location>() {
         @Override
-        //Compare between left and right hand side locations
         public int compare(Location lhs, Location rhs) {
-          // -1 - less than, 1 - greater than, 0 - equal, all inversed for descending          
           if (lhs.getCost() < rhs.getCost()) {
             return -1;  
           } else if (lhs.getCost() > rhs.getCost()) {
@@ -159,12 +184,10 @@ public class Ant {
       });
       
       loc = frontier.remove(0);
-      
-      //System.out.println(frontier);      
     }
-    */
+    
     else {
-      System.out.println("strategy is not applicable");
+      System.out.println("Strategy is not applicable");
       return;
     }
 
@@ -178,7 +201,7 @@ public class Ant {
     
     //add the node to the explored set
     explored.add(new Location(pos));
-    
+
     ArrayList<Location> expanded = availableCells(antWorld, pos);
     
     //expand the chosen node, adding the resulting nodes to the frontier
@@ -188,15 +211,15 @@ public class Ant {
       //only if not in the frontier or explored set
       if (!inList(frontier, l) && !inList(explored, l)){
         
-        if(strategy.equals(UNIFORM_COST)){
+        if(strategy.equals(UNIFORM_COST)) {
           frontier.add(new Location(l, antWorld.distance(pos, antWorld.food)));
-        }else{
+        }
+        else {
           frontier.add(l);
         }
       }
     }
-  }
-  
+  }  
   
   /*=============== INFORMED SEARCH STRATEGIES ============*/
   
@@ -229,13 +252,13 @@ public class Ant {
       return;
 
     ArrayList<Location> best = new ArrayList<Location>();
-    double bestVal = antWorld.switchEnv(pos);
+    double bestVal = antWorld.updateEnv(pos);
     best.add(pos);
 
     for (int i = 0; i < available.size(); i++) {
 
       Location loc = available.get(i);
-      double val = antWorld.switchEnv(loc);
+      double val = antWorld.updateEnv(loc);
 
       if (val < bestVal) {
         bestVal = val;
@@ -271,11 +294,11 @@ public class Ant {
     /* find best position */
     ArrayList<Ant> ants = antWorld.ants;
 
-    double bestValue = antWorld.switchEnv(ants.get(0).pos);
+    double bestValue = antWorld.updateEnv(ants.get(0).pos);
     Location bestPos = ants.get(0).pos;
     for (int i = 1; i < ants.size(); i++) {
       Ant ant = ants.get(i);
-      double val = antWorld.switchEnv(ant.pos);
+      double val = antWorld.updateEnv(ant.pos);
       if (val < bestValue) {
         bestPos = ant.pos;
       }
@@ -337,14 +360,17 @@ public class Ant {
     return ((Math.abs(n) / N + 1) * N + n) % N;
   }
 
-  /* where can the ant go from here? */
+  // Where can the ant go from here?
   ArrayList<Location> availableCells(AntWorld antWorld, Location loc) {
 
     ArrayList<Location> list = new ArrayList<Location>();
     int incr = diagonal ? 1 : 2;
     
+    // Each cell has 8 surround cells
     for (int dir = 0; dir < 8; dir += incr) {
       Location l = add(loc, dir);
+      
+      //Prevents Ant moving beyond the boundaries of the world and avoid obstacles
       if (antWorld.inWorld(l) && antWorld.getCellState(l) != Cell.OBSTACLE) {
         list.add(l);
       }

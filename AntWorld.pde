@@ -63,14 +63,14 @@ public void draw() {
 
 
 void updateAnts() {
-
   for (int i = 0; i < ants.size(); i++) {
 
     Ant ant = ants.get(i);
 
     switch (strategy) {
 
-    //Uninformed
+    /* Uninformed */
+    // Tree search
     default:
     case BFS_TREE:
       ant.simpleTreeSearch(this, Ant.BREADTH_FIRST);
@@ -78,17 +78,25 @@ void updateAnts() {
     case DFS_TREE:
       ant.simpleTreeSearch(this, Ant.DEPTH_FIRST);
       break;
-    case DEPTH_LIMITED:
+    case DLS_TREE:
       ant.simpleTreeSearch(this, Ant.DEPTH_LIMITED);
       break;
+    case UCS_TREE:
+      ant.simpleTreeSearch(this, Ant.UNIFORM_COST);
+      break;
+      
+    // Graph search
     case BFS_GRAPH:
       ant.simpleGraphSearch(this, Ant.BREADTH_FIRST);
       break;
     case DFS_GRAPH:
       ant.simpleGraphSearch(this, Ant.DEPTH_FIRST);
       break;
+    case UCS_GRAPH:
+      ant.simpleGraphSearch(this, Ant.UNIFORM_COST);
+      break;
       
-    //Informed
+    /* Informed */
     case RANDOM:
       ant.randomSearch(this);
       break;
@@ -103,7 +111,7 @@ void updateAnts() {
 }
 
 //Maths functions
-double switchEnv(Location loc) {
+double updateEnv(Location loc) {
   switch (env) {
   case DISTANCE:
     return distance(loc, food);
@@ -121,7 +129,6 @@ private double noisy(Location loc) {
   double variance = 0.1 * width;
   double noise = variance * random.nextGaussian();
 
-  //return switchEnv(loc, food) + noise;
   return distance(loc, food) + noise;
 }
 

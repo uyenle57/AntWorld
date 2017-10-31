@@ -19,7 +19,7 @@ public class Location {
     this.cost = cost;
   }
   
-  public double getCost(){
+  public double getCost() {
    return this.cost; 
   }
 
