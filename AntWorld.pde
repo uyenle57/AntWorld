@@ -8,10 +8,12 @@ import java.util.Random;
 private static final long serialVersionUID = 1L;
 
 // Drawing, animation and colours
+int windowWidth = 512;
 final static int ANT = 255 << 24 | 128 << 16;
 final static int VISITED = 64 << 24 | 32 << 16;
 Map<Integer, Integer> stateToColour = new HashMap<Integer, Integer>();
-boolean pause, toggle;
+boolean pause;
+boolean toggle;
 
 //Initialise objects 
 Env env;
@@ -31,26 +33,30 @@ ArrayList<Ant> ants;
 
 public void setup() {
 
-  size(512, 512);
+  size(812, 512);
+  colorMode(HSB, 100);
   pause = true;
   toggle = true; //toggle obstacle/background when dragging mouse
   frameRate(12);
   
   initWorld();
 
+  fill(0);
+  text("Press SPACE to Start/Stop", width-200, height/2);
+
   //Colours for cell state
   stateToColour.put(Cell.UNDEFINED, -1);
-  stateToColour.put(Cell.BACKGROUND, 255 << 24 | 255 << 16 | 255 << 8
-    | 255);
+  stateToColour.put(Cell.BACKGROUND, 255 << 24 | 255 << 16 | 255 << 8 | 255);
   stateToColour.put(Cell.FOOD, 255 << 24 | 128);
   stateToColour.put(Cell.NEST, 255 << 24 | 128 << 8);
   stateToColour.put(Cell.OBSTACLE, 255 << 24);
   stateToColour.put(Cell.FALSEFOOD, 64 << 24 | 128);
+  
 }
 
 
 public void draw() {
-
+  
   background(stateToColour.get(Cell.BACKGROUND));
 
   drawCells();

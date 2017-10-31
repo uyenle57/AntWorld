@@ -2,15 +2,12 @@
 //Initialise the world
 
 public void initWorld() {
-  
-  fill(0);
-  text("Press SPACE to Start", width/2, height/2);
-  
+    
   //The world
   numRows = 16;
   numCols = 16;
-  cellWidth = width / numCols;
-  cellHeight = width / numCols;
+  cellWidth = windowWidth / numCols;
+  cellHeight = windowWidth / numCols;
   cells = new Cell[numRows][numCols];
   for (int row = 0; row < numRows; row++) {
       for (int col = 0; col < numCols; col++) {
@@ -21,7 +18,7 @@ public void initWorld() {
   random = new Random(); //Pseudorandom number generator (PRNG)
   
   env = Env.UNINFORMED;
-  strategy = Strategy.UCS_TREE;
+  strategy = Strategy.DFS_GRAPH;
   
   // Add False food in the Deception environment
   if (env == Env.DECEPTION) {
@@ -62,13 +59,17 @@ public void initWorld() {
 void drawAnts() {
   rectMode(CORNER);
   noStroke();
-
+  
+  float col = 0; 
+  
   for (int i = 0; i < ants.size(); i++) {
 
     Ant ant = ants.get(i);
 
     for (Location l : ant.explored) {
-      fill(VISITED);
+      col++;
+      col %= 255;
+      fill(col, 255, 255, 40); //rainbow colors
       rect(l.col * cellWidth, l.row * cellHeight, cellWidth, cellHeight);
     }
 
@@ -96,14 +97,14 @@ void drawCells() {
 }
 
 void drawGrid() {
-  stroke(128);
+  stroke(0, 40);
 
   for (int col = 1; col <= numCols; col++) {
     line(col * cellWidth, 0, col * cellWidth, height);
   }
 
   for (int row = 1; row <= numRows; row++) {
-    line(0, row * cellHeight, width, row * cellHeight);
+    line(0, row * cellHeight, windowWidth, row * cellHeight);
   }
 }
 
