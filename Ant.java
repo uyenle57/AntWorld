@@ -19,6 +19,7 @@ public class Ant {
   final static String DEPTH_FIRST = "Depth First Search";
   final static String DEPTH_LIMITED = "Depth Limited Search";
   final static String UNIFORM_COST = "Uniform Cost Search";
+  final static String ITERATIVE_DEEPENING = "Iterative Deepending Search";
   
   //Depth Limited Search first limits
   int depthLimit = 10;
@@ -29,7 +30,7 @@ public class Ant {
  
 
   Ant(int r, int c, AntWorld antWorld) {
-
+    
     pos = new Location(r, c);
     state = 0;
 
@@ -115,7 +116,7 @@ public class Ant {
     
     move(loc);
     
-    //if the ant reaches food then return the corresponding solution
+    //Goal test - if the ant reaches food then return the corresponding solution
     if (antWorld.food.equals(pos)) {
       stop(antWorld);
       return;
@@ -149,8 +150,12 @@ public class Ant {
         currentDepth++; 
      }
   }
+  
+  
+  
 
-
+  // ==================================================================================
+  
   public void simpleGraphSearch(AntWorld antWorld, String strategy) {
   
     //If frontier is empty then return failture
@@ -166,8 +171,7 @@ public class Ant {
     }
     else if (strategy.equals(DEPTH_FIRST)) {
       loc = frontier.remove(frontier.size() - 1);
-    }
-    
+    }  
     else if (strategy.equals(UNIFORM_COST)) {
       
       Collections.sort(frontier, new Comparator<Location>() {
@@ -193,8 +197,8 @@ public class Ant {
 
     move(loc);
     
-    //if the ant reaches food then return the corresponding solution
-    if (antWorld.food.equals(pos)) {
+    //Goal test - if the ant reaches food then return the corresponding solution
+    if (antWorld.food.equals(pos)) {    
       stop(antWorld);
       return;
     }
@@ -209,7 +213,7 @@ public class Ant {
       Location l = expanded.get(i);
       
       //only if not in the frontier or explored set
-      if (!inList(frontier, l) && !inList(explored, l)){
+      if (!inList(frontier, l) && !inList(explored, l)) {
         
         if(strategy.equals(UNIFORM_COST)) {
           frontier.add(new Location(l, antWorld.distance(pos, antWorld.food)));

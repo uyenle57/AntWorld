@@ -18,7 +18,7 @@ public void initWorld() {
   random = new Random(); //Pseudorandom number generator (PRNG)
   
   env = Env.UNINFORMED;
-  strategy = Strategy.UCS_TREE;
+  //strategy = Strategy.DLS_TREE;
   
   // Add False food in the Deception environment
   if (env == Env.DECEPTION) {
@@ -53,7 +53,7 @@ public void initWorld() {
 }
 
 
-// Draw Ants, Cells and Grid
+// Draw Ants, Cells, Grid and GUI
 
 void drawAnts() {
   rectMode(CORNER);
@@ -103,17 +103,67 @@ void drawGrid() {
   }
 }
 
-void drawGui() {
+
+public void drawGui() {
+  
+  fill(0);
+  textSize(30);
+  text("Ant World", width-270, 100);
+  textSize(15);
+  text("Press SPACE to start/stop", width-270, 140);
   
   cp5 = new ControlP5(this);
   
-  //TO DO:
-  // increase font size
-  // add options
+  ddl_Tree = cp5.addDropdownList("treeSearchGui").setLabel("Tree Search")
+             .setPosition(width-270, 180)
+             .addItem("Breadth First Search", 1)
+             .addItem("Depth First Search", 2)
+             .addItem("Depth Limited Search", 3)
+             .addItem("Uniform Cost Search", 4);
+  customise(ddl_Tree);
   
-  d1 = cp5.addDropdownList("Environment").setPosition(width-250, 100);
-  d2 = cp5.addDropdownList("Strategy").setPosition(width-250, 150);
+  ddl_Graph = cp5.addDropdownList("graphSearchGui").setLabel("Graph Search")
+              .setPosition(width-140, 180)
+              .addItem("Breadth First Search", 1)
+              .addItem("Depth First Search", 2)
+              .addItem("Depth Limited Search", 3);
+  customise(ddl_Graph);
+  
+  //ddl_depthLimit = cp5.addDropdownList("depthLimitGui").setLabel("Graph Search")
+  //          .setPosition(width-140, 180)
+  //          .addItem("5", 1)
+  //          .addItem("10", 2)
+  //          .addItem("20", 3);
+  //          .addItem("30", 4);
+  //customise(ddl_Graph);
+  
+  cp5.addButton("restart").setLabel("Start Again")
+      .setPosition(width-270, 280)
+      .setSize(100, 20)
+      .setColorBackground(color(60))
+      .setColorActive(color(255, 128));
 }
+
+public void customise(DropdownList ddl) {
+  ddl.setBarHeight(20);
+  ddl.setItemHeight(20);
+  ddl.setColorBackground(color(60));
+  ddl.setColorActive(color(255, 128));
+}
+
+public void treeSearchGui() {
+    
+}
+
+public void graphSearchGui() {
+
+}
+
+public void restart() {
+  println("AntWorld restarted.");
+}
+
+
 // User Interactions
 
 public void keyPressed() {

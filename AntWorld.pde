@@ -12,12 +12,11 @@ private static final long serialVersionUID = 1L;
 final static int ANT = 255 << 24 | 128 << 16;
 final static int VISITED = 64 << 24 | 32 << 16;
 Map<Integer, Integer> stateToColour = new HashMap<Integer, Integer>();
-boolean pause;
-boolean toggle;
+boolean pause, toggle;
 int windowWidth = 512;
 
 ControlP5 cp5;
-DropdownList d1, d2, d3, d4;
+DropdownList ddl_Tree, ddl_Graph, ddl_depthLimit;
 
 //Initialise objects 
 Env env;
