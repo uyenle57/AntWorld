@@ -1,6 +1,8 @@
 
 //Initialise the world
 
+boolean Obstacles;
+
 public void initWorld() {
     
   //The world
@@ -18,7 +20,8 @@ public void initWorld() {
   random = new Random(); //Pseudorandom number generator (PRNG)
   
   env = Env.UNINFORMED;
-  //strategy = Strategy.DLS_TREE;
+  
+  Obstacles = false;
   
   // Add False food in the Deception environment
   if (env == Env.DECEPTION) {
@@ -44,12 +47,6 @@ public void initWorld() {
   ants = new ArrayList<Ant>();
   for (int i = 0; i < numAnts; i++)
     ants.add(new Ant(nest, this));
-
-  //Obstacles
-  //cells[numRows / 2][numCols / 2].state = Cell.OBSTACLE;
-  //cells[numRows / 2 - 1][numCols / 2].state = Cell.OBSTACLE;
-  //cells[numRows / 2 + 1][numCols / 2 - 2].state = Cell.OBSTACLE;
-  //cells[numRows / 2 + 2][numCols / 2 - 2].state = Cell.OBSTACLE;
 }
 
 
@@ -107,71 +104,112 @@ void drawGrid() {
 public void drawGui() {
   
   fill(0);
-  textSize(30);
+  textSize(40);
   text("Ant World", width-270, 100);
-  textSize(15);
-  text("Press SPACE to start/stop", width-270, 140);
+  textSize(14);
+  text("Select a strategy below", width-270, 150);
   
   cp5 = new ControlP5(this);
+
+  text("Tree Search:", width-270, 190);
+  cp5.addToggle("BFS", width-270, 200, 30, 20).setColorLabel(color(0));
+  cp5.addToggle("DFS", width-220, 200, 30, 20).setColorLabel(color(0));
+  cp5.addToggle("DLS", width-170, 200, 30, 20).setColorLabel(color(0));
+  cp5.addToggle("UCS", width-120, 200, 30, 20).setColorLabel(color(0));
   
-  ddl_Tree = cp5.addDropdownList("treeSearchGui").setLabel("Tree Search")
-             .setPosition(width-270, 180)
-             .addItem("Breadth First Search", 1)
-             .addItem("Depth First Search", 2)
-             .addItem("Depth Limited Search", 3)
-             .addItem("Uniform Cost Search", 4);
-  customise(ddl_Tree);
+  text("Graph Search:", width-270, 270);
+  cp5.addToggle("BFS_", width-270, 280, 30, 20).setColorLabel(color(0));
+  cp5.addToggle("DFS_", width-220, 280, 30, 20).setColorLabel(color(0));
+  cp5.addToggle("UCS_", width-170, 280, 30, 20).setColorLabel(color(0));
   
-  ddl_Graph = cp5.addDropdownList("graphSearchGui").setLabel("Graph Search")
-              .setPosition(width-140, 180)
-              .addItem("Breadth First Search", 1)
-              .addItem("Depth First Search", 2)
-              .addItem("Depth Limited Search", 3);
-  customise(ddl_Graph);
-  
-  //ddl_depthLimit = cp5.addDropdownList("depthLimitGui").setLabel("Graph Search")
-  //          .setPosition(width-140, 180)
-  //          .addItem("5", 1)
-  //          .addItem("10", 2)
-  //          .addItem("20", 3);
-  //          .addItem("30", 4);
-  //customise(ddl_Graph);
+  cp5.addToggle("Obstacles", width-270, 350, 30, 20).setMode(ControlP5.SWITCH).setColorLabel(color(0));
   
   cp5.addButton("restart").setLabel("Start Again")
-      .setPosition(width-270, 280)
-      .setSize(100, 20)
-      .setColorBackground(color(60))
-      .setColorActive(color(255, 128));
-}
-
-public void customise(DropdownList ddl) {
-  ddl.setBarHeight(20);
-  ddl.setItemHeight(20);
-  ddl.setColorBackground(color(60));
-  ddl.setColorActive(color(255, 128));
-}
-
-public void treeSearchGui() {
-    
-}
-
-public void graphSearchGui() {
-
+      .setPosition(width-270, 400).setSize(80, 20)
+      .setColorBackground(color(60)).setColorActive(color(255, 128));
+  
+  //Draw Obstacles
+  if (Obstacles) {
+    cells[numRows / 2][numCols / 2].state = Cell.OBSTACLE;
+    cells[numRows / 2 - 1][numCols / 2].state = Cell.OBSTACLE;
+    cells[numRows / 2 + 1][numCols / 2 - 2].state = Cell.OBSTACLE;
+    cells[numRows / 2 + 2][numCols / 2 - 2].state = Cell.OBSTACLE;
+    println("\n Obstacles ON \n");
+  }
 }
 
 public void restart() {
+  setup();
   println("AntWorld restarted.");
 }
 
 
-// User Interactions
+/* User Interactions */
+
+public void mousePressed() {
+
+  //Display Obstacles
+  if(mouseX>width-270 && mouseX<572 && mouseY>350 && mouseY<370) {
+    Obstacles = true;
+  }
+  
+  //Tree Search
+  if(mouseX>width-270 && mouseX<572 && mouseY>200 && mouseY<220) {
+    restart();
+    strategy = Strategy.BFS_TREE;
+    pause = false;
+    println("\n Running strategy " + strategy + "\n");
+  }
+  else if (mouseX>width-220 && mouseX<622 && mouseY>200 && mouseY<220) {
+    restart();
+    strategy = Strategy.DFS_TREE;
+    pause = false;
+    println("\n Running strategy " + strategy + "\n");  
+  }
+  else if (mouseX>width-170 && mouseX<672 && mouseY>200 && mouseY<220) {
+    restart();
+    strategy = Strategy.DLS_TREE;
+    pause = false;
+    println("\n Running strategy " + strategy + "\n");  
+  }
+  else if (mouseX>width-120 && mouseX<772 && mouseY>200 && mouseY<220) {
+    restart();
+    strategy = Strategy.UCS_TREE;
+    pause = false;
+    println("\n Running strategy " + strategy + "\n");  
+  }
+  
+  //Graph Search
+  else if (mouseX>width-270 && mouseX<572 && mouseY>280 && mouseY<300) {
+    restart();
+    strategy = Strategy.BFS_GRAPH;
+    pause = false;
+    println("\n Running strategy " + strategy + "\n");  
+  }
+  else if (mouseX>width-220 && mouseX<622 && mouseY>280 && mouseY<300) {   
+    restart();
+    strategy = Strategy.DFS_GRAPH;
+    pause = false;
+    println("\n Running strategy " + strategy + "\n");
+  }
+  else if (mouseX>width-170 && mouseX<672 && mouseY>280 && mouseY<300) {    
+    restart();
+    strategy = Strategy.UCS_GRAPH;
+    pause = false;
+    println("\n Running strategy " + strategy + "\n");
+  }
+}
+
 
 public void keyPressed() {
-  
-  if (key == ' ')
-    pause = !pause;
-  else if (key == 't')
+  if (key == ' ') {
+    //check that a strategy has been chosen
+    if(strategy != null) pause = !pause;
+    else println("\n ERROR: Please choose a strategy first! \n");
+  } 
+  else if (key == 't') {
     toggle = !toggle;
+  }
 }
 
 public void mouseClicked() {
