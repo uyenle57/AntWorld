@@ -1,4 +1,5 @@
 
+import controlP5.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,12 +9,13 @@ import java.util.Random;
 private static final long serialVersionUID = 1L;
 
 // Drawing, animation and colours
-int windowWidth = 512;
 final static int ANT = 255 << 24 | 128 << 16;
 final static int VISITED = 64 << 24 | 32 << 16;
 Map<Integer, Integer> stateToColour = new HashMap<Integer, Integer>();
-boolean pause;
-boolean toggle;
+boolean pause, toggle;
+int windowWidth = 512;
+
+ControlP5 cp5;
 
 //Initialise objects 
 Env env;
@@ -41,9 +43,6 @@ public void setup() {
   
   initWorld();
 
-  fill(0);
-  text("Press SPACE to Start/Stop", width-200, height/2);
-
   //Colours for cell state
   stateToColour.put(Cell.UNDEFINED, -1);
   stateToColour.put(Cell.BACKGROUND, 255 << 24 | 255 << 16 | 255 << 8 | 255);
@@ -51,7 +50,6 @@ public void setup() {
   stateToColour.put(Cell.NEST, 255 << 24 | 128 << 8);
   stateToColour.put(Cell.OBSTACLE, 255 << 24);
   stateToColour.put(Cell.FALSEFOOD, 64 << 24 | 128);
-  
 }
 
 
@@ -62,7 +60,8 @@ public void draw() {
   drawCells();
   drawAnts();
   drawGrid();
-
+  drawGui();
+  
   if (!pause)
     updateAnts();
 }
