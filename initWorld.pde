@@ -21,7 +21,7 @@ public void initWorld() {
   
   env = Env.UNINFORMED;
   
-  Obstacles = false;
+  Obstacles = true;
   
   // Add False food in the Deception environment
   if (env == Env.DECEPTION) {
@@ -65,7 +65,7 @@ void drawAnts() {
     for (Location l : ant.explored) {
       col++;
       col %= 255;
-      fill(col, 255, 255, 40); //rainbow colors
+      fill(col, 255, 255, 60); //rainbow colors
       rect(l.col * cellWidth, l.row * cellHeight, cellWidth, cellHeight);
     }
 
@@ -111,7 +111,7 @@ public void drawGui() {
   textSize(40);
   text("Ant World", width-270, 100);
   textSize(14);
-  text("Select a strategy below", width-270, 150);
+  text("Select a strategy below to start", width-270, 150);
   
   cp5 = new ControlP5(this);
 
@@ -133,13 +133,14 @@ public void drawGui() {
       .setColorBackground(color(60)).setColorActive(color(255, 128));
   
   //Draw Obstacles
-  if (Obstacles) {
+  if (Obstacles==true) {
     cells[numRows / 2][numCols / 2].state = Cell.OBSTACLE;
     cells[numRows / 2 - 1][numCols / 2].state = Cell.OBSTACLE;
     cells[numRows / 2 + 1][numCols / 2 - 2].state = Cell.OBSTACLE;
     cells[numRows / 2 + 2][numCols / 2 - 2].state = Cell.OBSTACLE;
-    println("\n Obstacles ON \n");
+    println("\n Obstacles: ON");
   }
+  else println("\n Obstacles: OFF");
 }
 
 public void restart() {
@@ -152,9 +153,9 @@ public void restart() {
 
 public void mousePressed() {
 
-  //Display Obstacles
+  //Obstacles
   if(mouseX>width-270 && mouseX<572 && mouseY>350 && mouseY<370) {
-    Obstacles = true;
+    Obstacles = !Obstacles;
   }
   
   //Tree Search
