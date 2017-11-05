@@ -149,9 +149,8 @@ public void drawGui() {
       
       
   //Obstacles
-  if (Obstacles) {
-    drawObstacles();
-  }
+  if (Obstacles) drawObstacles();
+  
 }
 
 public void restart() {
