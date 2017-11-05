@@ -2,6 +2,8 @@
 //Initialise the world
 
 boolean Obstacles;
+boolean BFS, DFS, DLS, UCS; //Tree search
+boolean BFS_, DFS_, UCS_; //Graph search
 
 public void initWorld() {
     
@@ -20,8 +22,6 @@ public void initWorld() {
   random = new Random(); //Pseudorandom number generator (PRNG)
   
   env = Env.UNINFORMED;
-  
-  Obstacles = true;
   
   // Add False food in the Deception environment
   if (env == Env.DECEPTION) {
@@ -47,10 +47,13 @@ public void initWorld() {
   ants = new ArrayList<Ant>();
   for (int i = 0; i < numAnts; i++)
     ants.add(new Ant(nest, this));
+  
+  //Obstacles
+  Obstacles = false;
 }
 
 
-// Draw Ants, Cells, Grid and GUI
+// Draw Ants, Cells, Grid, Obstacles and GUI
 
 void drawAnts() {
   rectMode(CORNER);
@@ -104,6 +107,15 @@ void drawGrid() {
   }
 }
 
+public void drawObstacles() {
+    cells[numRows / 2][numCols / 2].state = Cell.OBSTACLE;
+    cells[numRows / 2 - 1][numCols / 2].state = Cell.OBSTACLE;
+    cells[numRows / 2 + 1][numCols / 2 - 2].state = Cell.OBSTACLE;
+    cells[numRows / 2 + 2][numCols / 2 - 2].state = Cell.OBSTACLE;
+    cells[numRows / 2 + 2][numCols / 2 - 2].state = Cell.OBSTACLE;
+    cells[numRows / 2 + 2][numCols / 2 - 1].state = Cell.OBSTACLE;
+    //cells[numRows + 8][numCols / 2 - 1].state = Cell.OBSTACLE;
+}
 
 public void drawGui() {
   
@@ -116,31 +128,27 @@ public void drawGui() {
   cp5 = new ControlP5(this);
 
   text("Tree Search:", width-270, 190);
-  cp5.addToggle("BFS", width-270, 200, 30, 20).setColorLabel(color(0));
-  cp5.addToggle("DFS", width-220, 200, 30, 20).setColorLabel(color(0));
-  cp5.addToggle("DLS", width-170, 200, 30, 20).setColorLabel(color(0));
-  cp5.addToggle("UCS", width-120, 200, 30, 20).setColorLabel(color(0));
+  cp5.addToggle("BFS", width-270, 200, 30, 20).setValue(false).setColorLabel(color(0));
+  cp5.addToggle("DFS", width-220, 200, 30, 20).setValue(false).setColorLabel(color(0));
+  cp5.addToggle("DLS", width-170, 200, 30, 20).setValue(false).setColorLabel(color(0));
+  cp5.addToggle("UCS", width-120, 200, 30, 20).setValue(false).setColorLabel(color(0));
   
   text("Graph Search:", width-270, 270);
-  cp5.addToggle("BFS_", width-270, 280, 30, 20).setColorLabel(color(0));
-  cp5.addToggle("DFS_", width-220, 280, 30, 20).setColorLabel(color(0));
-  cp5.addToggle("UCS_", width-170, 280, 30, 20).setColorLabel(color(0));
+  cp5.addToggle("BFS_", width-270, 280, 30, 20).setValue(false).setColorLabel(color(0));
+  cp5.addToggle("DFS_", width-220, 280, 30, 20).setValue(false).setColorLabel(color(0));
+  cp5.addToggle("UCS_", width-170, 280, 30, 20).setValue(false).setColorLabel(color(0));
   
-  cp5.addToggle("Obstacles", width-270, 350, 30, 20).setMode(ControlP5.SWITCH).setColorLabel(color(0));
+  cp5.addToggle("Obstacles", width-270, 350, 40, 20).setMode(ControlP5.SWITCH).setColorLabel(color(0));
   
   cp5.addButton("restart").setLabel("Start Again")
       .setPosition(width-270, 400).setSize(80, 20)
       .setColorBackground(color(60)).setColorActive(color(255, 128));
-  
-  //Draw Obstacles
-  if (Obstacles==true) {
-    cells[numRows / 2][numCols / 2].state = Cell.OBSTACLE;
-    cells[numRows / 2 - 1][numCols / 2].state = Cell.OBSTACLE;
-    cells[numRows / 2 + 1][numCols / 2 - 2].state = Cell.OBSTACLE;
-    cells[numRows / 2 + 2][numCols / 2 - 2].state = Cell.OBSTACLE;
-    println("\n Obstacles: ON");
+      
+      
+  //Obstacles
+  if (Obstacles) {
+    drawObstacles();
   }
-  else println("\n Obstacles: OFF");
 }
 
 public void restart() {
@@ -151,60 +159,26 @@ public void restart() {
 
 /* User Interactions */
 
-public void mousePressed() {
-
-  //Obstacles
-  if(mouseX>width-270 && mouseX<572 && mouseY>350 && mouseY<370) {
-    Obstacles = !Obstacles;
-  }
-  
-  //Tree Search
-  if(mouseX>width-270 && mouseX<572 && mouseY>200 && mouseY<220) {
+public void updateStrategy(Strategy strategy) {
     restart();
-    strategy = Strategy.BFS_TREE;
+    this.strategy = strategy;
     pause = false;
-    println("\n Running strategy " + strategy + "\n");
-  }
-  else if (mouseX>width-220 && mouseX<622 && mouseY>200 && mouseY<220) {
-    restart();
-    strategy = Strategy.DFS_TREE;
-    pause = false;
-    println("\n Running strategy " + strategy + "\n");  
-  }
-  else if (mouseX>width-170 && mouseX<672 && mouseY>200 && mouseY<220) {
-    restart();
-    strategy = Strategy.DLS_TREE;
-    pause = false;
-    println("\n Running strategy " + strategy + "\n");  
-  }
-  else if (mouseX>width-120 && mouseX<772 && mouseY>200 && mouseY<220) {
-    restart();
-    strategy = Strategy.UCS_TREE;
-    pause = false;
-    println("\n Running strategy " + strategy + "\n");  
-  }
-  
-  //Graph Search
-  else if (mouseX>width-270 && mouseX<572 && mouseY>280 && mouseY<300) {
-    restart();
-    strategy = Strategy.BFS_GRAPH;
-    pause = false;
-    println("\n Running strategy " + strategy + "\n");  
-  }
-  else if (mouseX>width-220 && mouseX<622 && mouseY>280 && mouseY<300) {   
-    restart();
-    strategy = Strategy.DFS_GRAPH;
-    pause = false;
-    println("\n Running strategy " + strategy + "\n");
-  }
-  else if (mouseX>width-170 && mouseX<672 && mouseY>280 && mouseY<300) {    
-    restart();
-    strategy = Strategy.UCS_GRAPH;
-    pause = false;
-    println("\n Running strategy " + strategy + "\n");
-  }
+    println("\n Running strategy " + strategy + "\n"); 
 }
 
+public void mousePressed() {
+  
+  //Tree Search
+  if (BFS)      updateStrategy(Strategy.BFS_TREE);
+  else if (DFS) updateStrategy(Strategy.DFS_TREE);
+  else if (DLS) updateStrategy(Strategy.DLS_TREE);
+  else if (UCS) updateStrategy(Strategy.UCS_TREE);
+  
+  //Graph search
+  else if (BFS_) updateStrategy(Strategy.BFS_GRAPH);
+  else if (DFS_) updateStrategy(Strategy.DFS_GRAPH);
+  else if (UCS_) updateStrategy(Strategy.UCS_GRAPH);
+}
 
 public void keyPressed() {
   if (key == ' ') {

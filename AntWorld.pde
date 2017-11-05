@@ -37,6 +37,8 @@ public void setup() {
 
   size(812, 512);
   colorMode(HSB, 100);
+  smooth();
+  
   pause = true;
   toggle = true; //toggle obstacle/background when dragging mouse
   frameRate(12);
@@ -61,9 +63,7 @@ public void draw() {
   drawAnts();
   drawGrid();
   drawGui();
-  
-  if (!pause)
-    updateAnts();
+  if (!pause) updateAnts();
 }
 
 

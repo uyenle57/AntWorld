@@ -22,7 +22,7 @@ public class Ant {
   final static String ITERATIVE_DEEPENING = "Iterative Deepending Search";
   
   //Depth Limited Search first limits
-  int depthLimit = 10;
+  int depthLimit = 50;
   int currentDepth = 0; //Keeps track of current depth
   
   ArrayList<Location> frontier; // Cells to visit
