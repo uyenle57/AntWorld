@@ -52,7 +52,7 @@ public class Ant {
 
   // Return to nest
   void stop(AntWorld antWorld) {
-    System.out.println(UNIFORM_COST + ": "+ "Found food in " + explored.size() + " steps");
+    System.out.println("Found food in " + explored.size() + " steps");
     antWorld.pause = true;
 
     // returnToNest(antWorld);

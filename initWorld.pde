@@ -108,13 +108,16 @@ void drawGrid() {
 }
 
 public void drawObstacles() {
-    cells[numRows / 2][numCols / 2].state = Cell.OBSTACLE;
-    cells[numRows / 2 - 1][numCols / 2].state = Cell.OBSTACLE;
-    cells[numRows / 2 + 1][numCols / 2 - 2].state = Cell.OBSTACLE;
-    cells[numRows / 2 + 2][numCols / 2 - 2].state = Cell.OBSTACLE;
-    cells[numRows / 2 + 2][numCols / 2 - 2].state = Cell.OBSTACLE;
-    cells[numRows / 2 + 2][numCols / 2 - 1].state = Cell.OBSTACLE;
-    //cells[numRows + 8][numCols / 2 - 1].state = Cell.OBSTACLE;
+  cells[numRows / 2][numCols / 2].state = Cell.OBSTACLE;
+  cells[numRows / 2 - 1][numCols / 2].state = Cell.OBSTACLE;
+  cells[numRows / 2 + 1][numCols / 2 - 2].state = Cell.OBSTACLE;
+  cells[numRows / 2 + 2][numCols / 2 - 2].state = Cell.OBSTACLE;
+  cells[numRows / 2 + 2][numCols / 2 - 2].state = Cell.OBSTACLE;
+  cells[numRows / 2 + 2][numCols / 2 - 1].state = Cell.OBSTACLE;
+  cells[numRows / 2 + 5][numCols / 2 - 1].state = Cell.OBSTACLE;
+  cells[numRows / 2 - 3][numCols / 2 - 5].state = Cell.OBSTACLE;
+  cells[numRows / 2 - 3][numCols / 2 + 5].state = Cell.OBSTACLE;
+  cells[numRows / 2 - 4][numCols / 2 + 6].state = Cell.OBSTACLE;
 }
 
 public void drawGui() {
@@ -139,7 +142,7 @@ public void drawGui() {
   cp5.addToggle("UCS_", width-170, 280, 30, 20).setValue(false).setColorLabel(color(0));
   
   cp5.addToggle("Obstacles", width-270, 350, 40, 20).setMode(ControlP5.SWITCH).setColorLabel(color(0));
-  
+   
   cp5.addButton("restart").setLabel("Start Again")
       .setPosition(width-270, 400).setSize(80, 20)
       .setColorBackground(color(60)).setColorActive(color(255, 128));
@@ -160,7 +163,6 @@ public void restart() {
 /* User Interactions */
 
 public void updateStrategy(Strategy strategy) {
-    restart();
     this.strategy = strategy;
     pause = false;
     println("\n Running strategy " + strategy + "\n"); 
@@ -184,7 +186,7 @@ public void keyPressed() {
   if (key == ' ') {
     //check that a strategy has been chosen
     if(strategy != null) pause = !pause;
-    else println("\n ERROR: Please choose a strategy first! \n");
+    else println("\n ERROR: Please select a strategy first! \n");
   } 
   else if (key == 't') {
     toggle = !toggle;
