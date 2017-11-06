@@ -19,7 +19,6 @@ public class Ant {
   final static String DEPTH_FIRST = "Depth First Search";
   final static String DEPTH_LIMITED = "Depth Limited Search";
   final static String UNIFORM_COST = "Uniform Cost Search";
-  final static String ITERATIVE_DEEPENING = "Iterative Deepending Search";
   
   //Depth Limited Search first limits
   int depthLimit = 10; //try 30, 50, 100, 120
