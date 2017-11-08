@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Random;
 
 
+int timer = (int)millis()/1000;
+
+
 private static final long serialVersionUID = 1L;
 
 // Drawing, animation and colours
@@ -71,7 +74,9 @@ void updateAnts() {
   for (int i = 0; i < ants.size(); i++) {
 
     Ant ant = ants.get(i);
-
+    
+    timer = millis()/1000;
+    
     switch (strategy) {
 
     /* Uninformed */
@@ -112,6 +117,9 @@ void updateAnts() {
       ant.swarmSearch(this);
       break;
     }
+    
+    print(timer + " seconds");
+  
   }
 }
 
