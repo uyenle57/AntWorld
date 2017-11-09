@@ -21,8 +21,9 @@ public class Ant {
   final static String UNIFORM_COST = "Uniform Cost Search";
   
   //Depth Limited Search first limits
-  int depthLimit = 10; //try 30, 50, 100, 120
+  int depthLimit = 117; //try 50, 100, 117
   int currentDepth = 0; //Keeps track of current depth
+  int maxDepth = 0;
   
   ArrayList<Location> frontier; // Cells to visit
   ArrayList<Location> explored; // Cells already expanded
@@ -130,7 +131,7 @@ public class Ant {
     //expand the chosen node, adding the resulting nodes to the frontier
     for (int i = 0; i < expanded.size(); i++) {
       Location l = expanded.get(i);
-      
+            
       if(strategy.equals(UNIFORM_COST)) {
           frontier.add(new Location(l, antWorld.distance(pos, antWorld.food)));
       }
@@ -141,16 +142,14 @@ public class Ant {
       }
       else {
         frontier.add(expanded.get(i));
-      }
+      }  
     }
     
     //Gradually increase the currentDepth until depthLimit is reached
      if (strategy.equals(DEPTH_LIMITED)) {
-        currentDepth++; 
+        currentDepth++;
      }
   }
-  
-  
   
 
   // ==================================================================================
@@ -204,7 +203,7 @@ public class Ant {
     
     //add the node to the explored set
     explored.add(new Location(pos));
-
+    
     ArrayList<Location> expanded = availableCells(antWorld, pos);
     
     //expand the chosen node, adding the resulting nodes to the frontier
@@ -212,17 +211,20 @@ public class Ant {
       Location l = expanded.get(i);
       
       //only if not in the frontier or explored set
-      if (!inList(frontier, l) && !inList(explored, l)) {
-        
+      if (!inList(frontier, l) && !inList(explored, l)) {        
         if(strategy.equals(UNIFORM_COST)) {
           frontier.add(new Location(l, antWorld.distance(pos, antWorld.food)));
         }
-        else {
+        else {          
           frontier.add(l);
+          maxDepth++;
         }
       }
     }
+  
+  System.out.println("Max depth is: "+ maxDepth);
   }  
+  
   
   /*=============== INFORMED SEARCH STRATEGIES ============*/
   

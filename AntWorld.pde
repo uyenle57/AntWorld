@@ -118,7 +118,7 @@ void updateAnts() {
       break;
     }
     
-    print(timer + " seconds");
+    //print(timer + " seconds\n");
   
   }
 }
