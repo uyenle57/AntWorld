@@ -21,9 +21,8 @@ public class Ant {
   final static String UNIFORM_COST = "Uniform Cost Search";
   
   //Depth Limited Search first limits
-  int depthLimit = 117; //try 50, 100, 117
+  int depthLimit = 10; //try 30, 50, 100, 117, 120
   int currentDepth = 0; //Keeps track of current depth
-  int maxDepth = 0;
   
   ArrayList<Location> frontier; // Cells to visit
   ArrayList<Location> explored; // Cells already expanded
@@ -217,12 +216,10 @@ public class Ant {
         }
         else {          
           frontier.add(l);
-          maxDepth++;
         }
       }
     }
   
-  System.out.println("Max depth is: "+ maxDepth);
   }  
   
   
